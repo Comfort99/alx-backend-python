@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-""" A function that returns a floor of type float """
-
+""" Basic annotations concat """
 import math
 
 
-def floor(n: float) -> float:
-    """ floor of a float """
+def floor(n: float) -> int:
+    """ Returns the floor of the float """
     return math.floor(n)
