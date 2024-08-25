@@ -2,7 +2,8 @@
 """ Parameterize a unit test Model """
 from parameterized import parameterized
 import unittest
-from utils import access_nested_map
+from unittest.mock import Mock, patch
+from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -17,3 +18,40 @@ class TestAccessNestedMap(unittest.TestCase):
         """ A method to test access_nested_map
          and return the expexted output """
         self.assertEqual(access_nested_map(nested_map, path), excepted)
+
+    @parameterized.expand([
+        ({}, ("a",), 'a'),
+        ({"a": 1}, ("a", "b"), 'b')
+    ])
+    def test_access_nested_map_exception(self, nested_map, path, expected):
+        """ A method that raises a KeyError
+         If the key is not found """
+        with self.assertRaises(KeyError) as error:
+            access_nested_map(nested_map, path)
+        self.assertEqual(f"KeyError('{expected}')", repr(error.exception))
+
+
+class TestGetJson(unittest.TestCase):
+    """ Class that Inherits from unittest
+     to test Get Json Method """
+
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False})
+    ])
+    @patch('utils.requests.get')
+    def test_get_json(self, test_url, test_payload, mock_get):
+        """ A method to test Get Json Method
+         if is returning a dictionary """
+        mock_response = Mock()
+        mock_response.json.return_value = test_payload
+        mock_get.return_value = mock_response
+
+        # call the function with the test URL
+        result = get_json(test_url)
+
+        # Assert that the mocked requests.get
+        # was called exactly once with the test URL
+        mock_get.assert_called_once_with(test_url)
+
+        self.assertEqual(result, test_payload)
