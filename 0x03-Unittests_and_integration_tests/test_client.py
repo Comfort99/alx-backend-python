@@ -25,13 +25,20 @@ class TestGithubOrgClient(unittest.TestCase):
             f"https://api.github.com/orgs/{org_name}")
 
     def test_public_repos_url(self):
-        """ an org property that returns a value of a key """
+        """Test that _public_repos_url returns the correct URL based on the org property."""
 
-        # patch the org property of GithubOrgClient
-        with patch('client.GithubOrgClient.org',
-                   new_callable=PropertyMock) as mock:
-            payload = {"repos_url": "World"}
-            mock.return_value = payload
-            test_class = GithubOrgClient('test')
-            result = test_class._public_repos_url
-            self.assertEqual(result, payload["repos_url"])
+        expected_url = "https://api.github.com/orgs/google/repos"
+        test_payload = {"repos_url": expected_url}
+
+        # Patch the org property of GithubOrgClient
+        with patch.object(GithubOrgClient, 'org', new_callable=PropertyMock) as mock_org:
+            mock_org.return_value = test_payload
+
+            # Create an instance of GithubOrgClient
+            client = GithubOrgClient('google')
+
+            # Access the _public_repos_url property
+            result = client._public_repos_url
+
+            # Assert that the result is the expected URL
+            self.assertEqual(result, expected_url)
