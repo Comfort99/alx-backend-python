@@ -19,8 +19,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """ A method that test Org method and
         return a value of passed name_url"""
         test_org = GithubOrgClient(org_name)
-        url = test_org.org()
-        print(url)
+        test_org.org()
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}")
 
@@ -35,5 +34,4 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_org.return_value = payload
             test_repos = GithubOrgClient('test_org')
             result = test_repos._public_repos_url
-            print(result)
-            self.assertEqual(result, expected_url)
+            self.assertEqual(result, payload["repos_url"])
