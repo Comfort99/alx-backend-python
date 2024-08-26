@@ -25,13 +25,15 @@ class TestGithubOrgClient(unittest.TestCase):
             f"https://api.github.com/orgs/{org_name}")
 
     def test_public_repos_url(self):
-        """Test that _public_repos_url returns the correct URL based on the org property."""
+        """Test that _public_repos_url returns
+        the correct URL based on the org property."""
 
         expected_url = "https://api.github.com/orgs/google/repos"
         test_payload = {"repos_url": expected_url}
 
         # Patch the org property of GithubOrgClient
-        with patch.object(GithubOrgClient, 'org', new_callable=PropertyMock) as mock_org:
+        with patch.object(GithubOrgClient, 'org',
+                          new_callable=PropertyMock) as mock_org:
             mock_org.return_value = test_payload
 
             # Create an instance of GithubOrgClient
@@ -42,3 +44,20 @@ class TestGithubOrgClient(unittest.TestCase):
 
             # Assert that the result is the expected URL
             self.assertEqual(result, expected_url)
+
+    @patch('client.get_json')
+    def test_public_repos(self, mock_json):
+        """ A test function that test public repos
+         and returns a json from a list of dictionaries """
+        mock_playload = [{"name": "Play_value"}, {"name": "User_name"}]
+        mock_json.return_value = mock_playload
+
+        with patch.object(GithubOrgClient, '_public_repos_url',
+                          new_callable=PropertyMock) as mock_public:
+            mock_public.return_value = "hello/world"
+            test_public = GithubOrgClient("google")
+            self.assertEqual(test_public.public_repos(),
+                             ["Play_value", "User_name"])
+
+            mock_public.assert_called_once()
+            mock_json.assert_called_once()
