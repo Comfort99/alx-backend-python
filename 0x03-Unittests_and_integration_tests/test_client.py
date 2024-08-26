@@ -2,8 +2,9 @@
 """ Integration Test """
 from client import GithubOrgClient
 from parameterized import parameterized
-import unittest
 from unittest.mock import patch, PropertyMock
+from fixtures import TEST_PAYLOAD
+import unittest
 
 
 class TestGithubOrgClient(unittest.TestCase):
