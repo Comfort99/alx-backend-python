@@ -27,10 +27,9 @@ class TestGithubOrgClient(unittest.TestCase):
         """ an org property that returns a value of a key """
 
         # patch the org property of GithubOrgClient
-        with patch.object(GithubOrgClient,
-                          'org', new_callable=PropertyMock) as mock_org:
-            expected_url = "https://api.github.com/orgs/test_org/repos"
-            payload = {"repos_url": expected_url}
+        with patch('client.GithubOrgClient.org',
+                   new_callable=PropertyMock) as mock_org:
+            payload = {"repos_url": "World"}
             mock_org.return_value = payload
             test_repos = GithubOrgClient('test_org')
             result = test_repos._public_repos_url
